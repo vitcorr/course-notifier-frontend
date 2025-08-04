@@ -10,21 +10,39 @@ import {
   Input,
   Portal,
   Select,
+  Spinner,
   VStack,
   Center,
   NumberInput,
 } from "@chakra-ui/react";
 
+import { SubmitHandler, useForm } from "react-hook-form";
+
+type FormFields = {
+  name: string;
+  email: string;
+  term: string;
+  crn: number;
+};
+
 function App() {
-  const onSubmit = () => {
-    // Handle form submission logic here
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<FormFields>();
+
+  const onSubmit: SubmitHandler<FormFields> = async (data) => {
+    await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate async operation
+    console.log("Form submitted with data:", data);
+    // Here you can handle the form submission, e.g., send data to an API
   };
 
   const frameworks = createListCollection({
     items: [
-      { label: "fall 2025", value: "fall" },
-      { label: "winter 2026", value: "winter" },
-      { label: "summer 2026", value: "summer" },
+      { label: "summer 2025", value: "202520" },
+      { label: "fall 2025", value: "202530" },
+      { label: "winter 2026", value: "202610" },
     ],
   });
 
@@ -42,12 +60,10 @@ function App() {
       <Text
         fontSize="6xl"
         fontWeight="extrabold"
-        style={{
-          backgroundImage: "linear-gradient(to left, #7928CA, cyan)",
-          WebkitBackgroundClip: "text",
-          backgroundClip: "text",
-          color: "transparent",
-        }}
+        bgGradient="to-l"
+        gradientFrom="#7928CA"
+        gradientTo="cyan"
+        bgClip="text"
       >
         course notifier
       </Text>
@@ -65,24 +81,44 @@ function App() {
 
       <Card.Root width={"full"} maxWidth={"md"} data-testid="login-form">
         <Card.Body py={2}>
-          <form onSubmit={onSubmit}>
+          <form onSubmit={handleSubmit(onSubmit)}>
             <VStack className={"w-full"} gap={"12px"}>
               {/* first name */}
               <Field.Root>
-                <Field.Label>first name</Field.Label>
-                <Input placeholder="enter you firstname" />
+                <Field.Label>name</Field.Label>
+                <Input {...register("name")} placeholder="enter your name" />
               </Field.Root>
 
               {/* Email */}
-              <Field.Root required>
+              <Field.Root invalid={!!errors.email}>
                 <Field.Label>email</Field.Label>
-                <Input placeholder="enter your email" />
+                <Input
+                  {...register("email", {
+                    required: "Email is required",
+                    pattern: {
+                      value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                      message: "Invalid email address",
+                    },
+                  })}
+                  placeholder="enter your email"
+                />
+                <Field.ErrorText>{errors.email?.message}</Field.ErrorText>
               </Field.Root>
 
               {/* term */}
-              <Field.Root required>
+              <Field.Root invalid={!!errors.term}>
                 <Field.Label>term</Field.Label>
-                <Select.Root collection={frameworks} color={"#A7A9AD"}>
+                <Select.Root
+                  {...register("term", {
+                    required: "Term is required",
+                    validate: (value) => {
+                      if (!value) return "Please select a term";
+                      return true;
+                    },
+                  })}
+                  collection={frameworks}
+                  color={"#A7A9AD"}
+                >
                   <Select.HiddenSelect />
                   <Select.Control>
                     <Select.Trigger>
@@ -102,17 +138,28 @@ function App() {
                     </Select.Positioner>
                   </Portal>
                 </Select.Root>
+                <Field.ErrorText>{errors.term?.message}</Field.ErrorText>
               </Field.Root>
 
               {/* CRN */}
-              <Field.Root required>
+              <Field.Root invalid={!!errors.crn}>
                 <Field.Label>
                   course CRN <Field.RequiredIndicator />
                 </Field.Label>
-                <NumberInput.Root width="100%" min={0} max={99999}>
+                <NumberInput.Root width="100%" min={0}>
                   <NumberInput.Control />
-                  <NumberInput.Input />
+                  <NumberInput.Input
+                    {...register("crn", {
+                      required: "CRN is required",
+                      pattern: {
+                        value: /^[0-9]{5}$/,
+                        message: "CRN must be a 5-digit number",
+                      },
+                    })}
+                    placeholder="enter course CRN"
+                  />
                 </NumberInput.Root>
+                <Field.ErrorText>{errors.crn?.message}</Field.ErrorText>
               </Field.Root>
 
               <Button
@@ -123,9 +170,19 @@ function App() {
                 bgGradient="to-l"
                 gradientFrom="#7928CA"
                 gradientTo="cyan"
+                disabled={isSubmitting}
               >
                 submit
               </Button>
+
+              {isSubmitting && (
+                <VStack colorPalette="cyan">
+                  <Spinner color="colorPalette.600" />
+                  <Text color="colorPalette.600">
+                    Submitting, this may take a while...
+                  </Text>
+                </VStack>
+              )}
             </VStack>
           </form>
         </Card.Body>
