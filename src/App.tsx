@@ -14,7 +14,10 @@ import {
   VStack,
   Center,
   NumberInput,
+  Alert,
+  CloseButton,
 } from "@chakra-ui/react";
+import { useState } from "react";
 
 import { SubmitHandler, useForm } from "react-hook-form";
 
@@ -32,10 +35,28 @@ function App() {
     formState: { errors, isSubmitting },
   } = useForm<FormFields>();
 
+  const [error, setError] = useState(false);
+
   const onSubmit: SubmitHandler<FormFields> = async (data) => {
-    await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate async operation
+    //await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate async operation
     console.log("Form submitted with data:", data);
     // Here you can handle the form submission, e.g., send data to an API
+    await fetch("http://localhost:3000/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        // 'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: JSON.stringify(data),
+    })
+      .then((res) => res.text())
+      .then((data) => {
+        alert(data);
+      })
+      .catch((err) => {
+        console.log("Error: ", err);
+        setError(true);
+      });
   };
 
   const frameworks = createListCollection({
@@ -49,7 +70,9 @@ function App() {
   return (
     <Center
       h={"100vh"}
+      w={"100vw"}
       flexDirection="column"
+      p={{ base: 4, md: 8 }}
       gap={4}
       style={{
         backgroundImage: "linear-gradient(to top, black, black, #183061ff)",
@@ -57,8 +80,25 @@ function App() {
         color: "white",
       }}
     >
+      {error && (
+        <Alert.Root status="error" title="server error">
+          <Alert.Indicator />
+          <Alert.Title>
+            unable to connect to server..try again later
+          </Alert.Title>
+          <CloseButton
+            as="button"
+            onClick={() => {
+              setError(false);
+            }}
+            pos="relative"
+            top="-2"
+            insetEnd="-2"
+          />
+        </Alert.Root>
+      )}
       <Text
-        fontSize="6xl"
+        fontSize={{ base: "3xl", md: "6xl" }}
         fontWeight="extrabold"
         bgGradient="to-l"
         gradientFrom="#7928CA"
@@ -68,18 +108,23 @@ function App() {
         course notifier
       </Text>
       <Text
-        fontSize="2xl"
+        fontSize={{ base: "lg", md: "2xl" }}
         fontWeight="bold"
         bgGradient="to-l"
         gradientFrom="#7928CA"
         gradientTo="cyan"
         bgClip="text"
+        textAlign="center"
       >
         get notified when a Full or No Waitlist class opens at Carleton
         University.
       </Text>
 
-      <Card.Root width={"full"} maxWidth={"md"} data-testid="login-form">
+      <Card.Root
+        width={{ base: "80%", md: "full" }}
+        maxWidth={"md"}
+        data-testid="login-form"
+      >
         <Card.Body py={2}>
           <form onSubmit={handleSubmit(onSubmit)}>
             <VStack className={"w-full"} gap={"12px"}>
