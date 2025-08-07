@@ -119,6 +119,9 @@ function App() {
           />
         </Alert.Root>
       )}
+      <Text fontSize={{ base: "lg", md: "2xl" }} fontWeight="bold">
+        Beta v.1.0
+      </Text>
       <Text
         fontSize={{ base: "3xl", md: "6xl" }}
         fontWeight="extrabold"
