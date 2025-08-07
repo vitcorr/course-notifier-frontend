@@ -15,6 +15,7 @@ import {
   CloseButton,
 } from "@chakra-ui/react";
 import { useState } from "react";
+const apiUrl = import.meta.env.VITE_API_URL;
 
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Toaster, toaster } from "./components/ui/toaster";
@@ -60,7 +61,7 @@ function App() {
     //await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate async operation
     console.log("Form submitted with data:", data);
     // Here you can handle the form submission, e.g., send data to an API
-    await fetch("http://localhost:3000/", {
+    await fetch(apiUrl, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
