@@ -20,6 +20,7 @@ import {
 import { useState } from "react";
 
 import { SubmitHandler, useForm } from "react-hook-form";
+import { Toaster, toaster } from "./components/ui/toaster";
 
 type FormFields = {
   name: string;
@@ -37,6 +38,27 @@ function App() {
 
   const [error, setError] = useState(false);
 
+  //validate response type
+  const validateResponse = (data: string) => {
+    if (data.includes("Success")) {
+      toaster.create({
+        title: "Success",
+        description: data,
+        type: "success",
+        closable: true,
+        duration: 10000,
+      });
+    } else {
+      toaster.create({
+        title: "Error",
+        description: data,
+        type: "error",
+        closable: true,
+        duration: 10000,
+      });
+    }
+  };
+
   const onSubmit: SubmitHandler<FormFields> = async (data) => {
     //await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate async operation
     console.log("Form submitted with data:", data);
@@ -51,7 +73,9 @@ function App() {
     })
       .then((res) => res.text())
       .then((data) => {
-        alert(data);
+        //validate the response type
+        validateResponse(data);
+        console.log("Response from server:", data);
       })
       .catch((err) => {
         console.log("Error: ", err);
@@ -232,6 +256,7 @@ function App() {
           </form>
         </Card.Body>
       </Card.Root>
+      <Toaster />
     </Center>
   );
 }
