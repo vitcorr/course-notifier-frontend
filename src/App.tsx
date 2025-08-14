@@ -13,6 +13,7 @@ import {
   NumberInput,
   Alert,
   CloseButton,
+  Link,
 } from "@chakra-ui/react";
 import { useState } from "react";
 const apiUrl = import.meta.env.VITE_API_URL;
@@ -268,6 +269,16 @@ function App() {
         </Card.Body>
       </Card.Root>
       <Toaster />
+      <Text>
+        lookin for our legacy site?{" "}
+        <Link
+          variant="underline"
+          href="https://carleton-course-notifier.onrender.com/"
+          color="cyan.400"
+        >
+          here
+        </Link>{" "}
+      </Text>
     </Box>
   );
 }
