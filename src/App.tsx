@@ -1,4 +1,5 @@
 import {
+  Box,
   Text,
   Field,
   Card,
@@ -9,7 +10,6 @@ import {
   Select,
   Spinner,
   VStack,
-  Center,
   NumberInput,
   Alert,
   CloseButton,
@@ -90,9 +90,11 @@ function App() {
   });
 
   return (
-    <Center
+    <Box
       h={"100vh"}
       w={"100vw"}
+      display="flex"
+      alignItems={{ base: "start", md: "center" }}
       flexDirection="column"
       p={{ base: 4, md: 8 }}
       gap={4}
@@ -139,7 +141,6 @@ function App() {
         gradientFrom="#7928CA"
         gradientTo="cyan"
         bgClip="text"
-        textAlign="center"
       >
         get notified when a Full or No Waitlist class opens at Carleton
         University.
@@ -156,7 +157,11 @@ function App() {
               {/* first name */}
               <Field.Root>
                 <Field.Label>name</Field.Label>
-                <Input {...register("name")} placeholder="enter your name" />
+                <Input
+                  {...register("name")}
+                  placeholder="enter your name"
+                  fontSize={{ base: "md" }}
+                />
               </Field.Root>
 
               {/* Email */}
@@ -171,6 +176,7 @@ function App() {
                     },
                   })}
                   placeholder="enter your email"
+                  fontSize={{ base: "md" }}
                 />
                 <Field.ErrorText>{errors.email?.message}</Field.ErrorText>
               </Field.Root>
@@ -192,7 +198,10 @@ function App() {
                   <Select.HiddenSelect />
                   <Select.Control>
                     <Select.Trigger>
-                      <Select.ValueText placeholder="select a term" />
+                      <Select.ValueText
+                        placeholder="select a term"
+                        fontSize={{ base: "md" }}
+                      />
                     </Select.Trigger>
                   </Select.Control>
                   <Portal>
@@ -227,6 +236,7 @@ function App() {
                       },
                     })}
                     placeholder="enter course CRN"
+                    fontSize={{ base: "md" }}
                   />
                 </NumberInput.Root>
                 <Field.ErrorText>{errors.crn?.message}</Field.ErrorText>
@@ -258,7 +268,7 @@ function App() {
         </Card.Body>
       </Card.Root>
       <Toaster />
-    </Center>
+    </Box>
   );
 }
 
